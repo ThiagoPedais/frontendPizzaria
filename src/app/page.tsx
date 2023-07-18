@@ -6,17 +6,20 @@ import logo from '../../public/logo.svg';
 import { Input } from '@/components/ui/input';
 import Button from '@/components/ui/Button';
 import Link from 'next/link';
-import { FormEvent, useContext } from 'react';
+import { FormEvent, useContext, useState } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
 
 export default function Home() {
 
   const { signIn } = useContext(AuthContext);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
-
-    // signIn()
+    let data = { email, password }
+    await signIn(data)
   }
 
   return (
@@ -31,10 +34,14 @@ export default function Home() {
           <Input
             placeholder='Email'
             type='email'
+            value={email}
+            onChange={e => setEmail(e.target.value)}
           />
           <Input
             placeholder='Senha'
             type='password'
+            value={password}
+            onChange={e => setEmail(e.target.value)}
           />
 
           <Button
