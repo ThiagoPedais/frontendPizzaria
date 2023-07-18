@@ -3,6 +3,7 @@ import styles from '@/styles/home.module.scss';
 import logo from '../../public/logo.svg';
 import { Input } from '@/components/ui/input';
 import Button from '@/components/ui/Button';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -22,13 +23,19 @@ export default function Home() {
             placeholder='Senha'
             type='password'
           />
+
+          <Button
+            type='submit'
+            loading={false}
+          >
+            Acessar
+          </Button>
         </form>
-        <Button
-          type='submit'
-          loading={false}
-        >
-          Acessar
-        </Button>
+
+        <Link href="/signup" className={styles.text}>
+          Não possui uma conta? Cadastre-se
+        </Link>
+
       </div>
     </div>
   )
