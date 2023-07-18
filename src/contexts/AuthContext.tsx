@@ -1,7 +1,8 @@
 'use client';
 
-import { useRouter } from 'next/router';
-import { destroyCookie } from 'nookies';
+import { api } from '@/services/apiClient';
+import { useRouter } from 'next/navigation';
+import { destroyCookie, setCookie } from 'nookies';
 import React, { createContext, ReactNode, useState } from 'react';
 
 type AuthContextData = {
@@ -30,8 +31,8 @@ export const AuthContext = createContext({} as AuthContextData)
 
 
 export const signOut = () => {
+
     const router = useRouter()
-    
     try {
         destroyCookie(undefined, '@nextauth.token')
         router.push('/')
@@ -44,12 +45,38 @@ export const signOut = () => {
 
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-
+    const router = useRouter()
     const [user, setUser] = useState<UserProps | null>(null);
     const isAuthenticated = !!user;
 
     const signIn = async ({ email, password }: SingInProps) => {
-        
+
+
+        try {
+            const res = await api.post('/session', {
+                email,
+                password
+            })
+
+            const { id, name, token } = res.data;
+
+            setCookie(undefined, '@nextauth.token', token, {
+                maxAge: 60 * 60 * 24 * 30,
+                path: "/"
+            })
+
+            setUser({ id, name, email })
+
+            // Passar para próximas requisições o nosso token
+            api.defaults.headers['Authorization'] = `Bearer ${token}`
+
+            router.push("/dashboard");
+
+        } catch (error) {
+            console.log('====================================');
+            console.log(error);
+            console.log('====================================');
+        }
     }
 
     return (

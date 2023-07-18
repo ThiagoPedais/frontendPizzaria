@@ -41,7 +41,7 @@ export default function Home() {
             placeholder='Senha'
             type='password'
             value={password}
-            onChange={e => setEmail(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
           />
 
           <Button
