@@ -8,7 +8,8 @@ import React, { createContext, ReactNode, useState } from 'react';
 type AuthContextData = {
     user: UserProps | null;
     isAuthenticated: boolean;
-    signIn: (credentials: SingInProps) => Promise<void>;
+    signIn: (credentials: SignInProps) => Promise<void>;
+    signUp: (credentials: SignUpProps) => Promise<void>;
     signOut: () => void;
 }
 
@@ -18,7 +19,13 @@ type UserProps = {
     email: string;
 }
 
-type SingInProps = {
+type SignInProps = {
+    email: string;
+    password: string;
+}
+
+type SignUpProps = {
+    name: string;
     email: string;
     password: string;
 }
@@ -31,7 +38,6 @@ export const AuthContext = createContext({} as AuthContextData)
 
 
 export const signOut = () => {
-
     const router = useRouter()
     try {
         destroyCookie(undefined, '@nextauth.token')
@@ -49,9 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<UserProps | null>(null);
     const isAuthenticated = !!user;
 
-    const signIn = async ({ email, password }: SingInProps) => {
-
-
+    const signIn = async ({ email, password }: SignInProps) => {
         try {
             const res = await api.post('/session', {
                 email,
@@ -79,8 +83,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     }
 
+    const signUp = async ({ name, email, password }: SignUpProps) => {
+        try {
+            const res = await api.post('/users', { name, email, password });
+            alert("Usuário cadastrado com sucesso!")
+            router.push('/');
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, signIn, signOut }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, signIn, signOut, signUp }}>
             {children}
         </AuthContext.Provider>
     )
