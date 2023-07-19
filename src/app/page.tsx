@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button';
 import Link from 'next/link';
 import { FormEvent, useContext, useState } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 export default function Home() {
 
@@ -20,7 +21,7 @@ export default function Home() {
     e.preventDefault();
 
     if(email === '' || password === '') {
-      alert("Preencha os dados!")
+      toast.warning("Preencha todos campos!")
       return;
     }
 
@@ -36,8 +37,9 @@ export default function Home() {
     <div className={styles.containerCenter}>
       <Image
         src={logo}
-        alt="logo"
+        alt="logo" 
       />
+      
 
       <div className={styles.login}>
         <form action="" onSubmit={handleLogin}>
