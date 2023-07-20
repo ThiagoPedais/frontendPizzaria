@@ -1,9 +1,9 @@
 'use client';
 
 import { api } from '@/services/apiClient';
-import { useRouter } from 'next/navigation';
-import { destroyCookie, setCookie } from 'nookies';
-import React, { createContext, ReactNode, useState } from 'react';
+import { useRouter, redirect } from 'next/navigation';
+import { destroyCookie, parseCookies, setCookie } from 'nookies';
+import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 type AuthContextData = {
@@ -38,23 +38,31 @@ type AuthProviderProps = {
 export const AuthContext = createContext({} as AuthContextData)
 
 
-export const signOut = () => {
-    const router = useRouter()
-    try {
-        destroyCookie(undefined, '@nextauth.token')
-        router.push('/')
-    } catch (error) {
-        console.log('====================================');
-        console.log(error);
-        console.log('====================================');
-    }
-}
+
 
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const router = useRouter()
     const [user, setUser] = useState<UserProps | null>(null);
     const isAuthenticated = !!user;
+
+    useEffect(() => {
+        // pegar cookie
+        const { '@nextauth.token': token } = parseCookies();
+
+        if (token) {
+            api.get('/me')
+                .then(res => {
+                    const { id, name, email } = res.data;
+                    setUser({
+                        id, name, email
+                    })
+                })
+                .catch(() => {
+                    signOut()
+                })
+        }
+    }, [])
 
     const signIn = async ({ email, password }: SignInProps) => {
         try {
@@ -97,6 +105,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             console.log(error);
         }
     }
+    const signOut = () => {       
+
+        try {
+            destroyCookie(undefined, '@nextauth.token');
+            router.push('/');
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <AuthContext.Provider value={{ user, isAuthenticated, signIn, signOut, signUp }}>

@@ -9,8 +9,11 @@ import Link from 'next/link';
 import { FormEvent, useContext, useState } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
 import { toast } from 'react-toastify';
+import { GetServerSideProps } from 'next';
+import withAuth from '@/utils/canSSRGuest';
 
-export default function Home() {
+
+const Home = () => {
 
   const { signIn } = useContext(AuthContext);
   const [email, setEmail] = useState('');
@@ -20,7 +23,7 @@ export default function Home() {
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
-    if(email === '' || password === '') {
+    if (email === '' || password === '') {
       toast.warning("Preencha todos campos!")
       return;
     }
@@ -37,12 +40,12 @@ export default function Home() {
     <div className={styles.containerCenter}>
       <Image
         src={logo}
-        alt="logo" 
+        alt="logo"
       />
-      
+
 
       <div className={styles.login}>
-        <form action="" onSubmit={handleLogin}>
+        <form onSubmit={handleLogin}>
           <Input
             placeholder='Email'
             type='email'
@@ -72,3 +75,5 @@ export default function Home() {
     </div>
   )
 }
+
+export default Home;
