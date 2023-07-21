@@ -1,12 +1,15 @@
+'use client'
+
 import axios, { AxiosError } from 'axios';
 import { parseCookies } from 'nookies';
 import { AuthTokenError } from './errors/AuthTokenError';
-import { AuthProvider } from '@/contexts/AuthContext';
-// import { signOut } from '@/contexts/AuthContext';
+import { AuthContext } from '@/contexts/AuthContext';
+import { useContext } from 'react';
 
 
 export const setupApiClient = (ctx = undefined) => {
     let cookies = parseCookies(ctx);
+    const { signOut } = useContext(AuthContext)
 
     const api = axios.create({
         baseURL: 'http://localhost:3333',
@@ -23,6 +26,7 @@ export const setupApiClient = (ctx = undefined) => {
             
             if (typeof window !== undefined) {
                 //chamar a função para deslogar o usuário
+                signOut()
             }else {
                 return Promise.reject(new AuthTokenError())
             }
