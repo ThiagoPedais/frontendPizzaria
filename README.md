@@ -1,4 +1,4 @@
-# Pizzaria Delícia
+# Pizzaria
 
 Projeto da Pizzaria!
 
