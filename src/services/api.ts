@@ -1,7 +1,8 @@
 import axios, { AxiosError } from 'axios';
 import { parseCookies } from 'nookies';
 import { AuthTokenError } from './errors/AuthTokenError';
-import { signOut } from '@/contexts/AuthContext';
+import { AuthProvider } from '@/contexts/AuthContext';
+// import { signOut } from '@/contexts/AuthContext';
 
 
 export const setupApiClient = (ctx = undefined) => {
@@ -19,7 +20,7 @@ export const setupApiClient = (ctx = undefined) => {
     }, (error: AxiosError) => {
         if (error.response?.status === 401) {
             // qualquer error de não autorizado deve-se deslogar o usuário
-            signOut()
+            
             if (typeof window !== undefined) {
                 //chamar a função para deslogar o usuário
             }else {

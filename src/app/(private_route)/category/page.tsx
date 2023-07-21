@@ -2,14 +2,28 @@
 
 import {useState, useContext, FormEvent} from 'react';
 import styles from './styles.module.scss';
+import { api } from '@/services/apiClient';
+import { toast } from 'react-toastify';
+import { setupApiClient } from '@/services/api';
 
 const Category = () => {
     const [name, setName] = useState('')
 
-    const handleRegister = (e: FormEvent) => {
+    const handleRegister = async (e: FormEvent) => {
         e.preventDefault();
 
-        alert(name)
+        if (name === ''){
+            toast.warning("O campo de categoria precisa ser preenchida");
+            return;
+        }
+
+        const apiClient = setupApiClient();
+        await apiClient.post('/category', {
+            name: name
+        });
+        toast.success("Categoria cadastrada com sucesso");
+        setName('');
+        
     }
 
     return (
